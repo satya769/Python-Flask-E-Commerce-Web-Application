@@ -1,0 +1,18 @@
+E-Commerce-App/
+│
+├── static/
+│   ├── css/
+│   └── js/
+│
+├── templates/
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── cart.html
+│   ├── admin.html
+│   └── checkout.html
+│
+├── app.py
+├── models.py
+├── requirements.txt
+└── ecommerce.sql
