@@ -1,0 +1,74 @@
+from flask import Flask, render_template, request, redirect, session
+    cart_items = Cart.query.filter_by(user_id=session['user_id']).all()
+
+    total = 0
+
+    for item in cart_items:
+        product = Product.query.get(item.product_id)
+        total += product.price * item.quantity
+
+    order = Order(
+        user_id=session['user_id'],
+        total_amount=total,
+        status='Placed'
+    )
+
+    db.session.add(order)
+
+    Cart.query.filter_by(user_id=session['user_id']).delete()
+
+    db.session.commit()
+
+    return 'Order Placed Successfully!'
+
+
+# =========================
+# ADMIN PANEL
+# =========================
+
+@app.route('/admin')
+def admin():
+
+    if session.get('role') != 'admin':
+        return 'Access Denied'
+
+    products = Product.query.all()
+
+    return render_template('admin.html', products=products)
+
+
+# =========================
+# ADD PRODUCT
+# =========================
+
+@app.route('/add-product', methods=['POST'])
+def add_product():
+
+    if session.get('role') != 'admin':
+        return 'Access Denied'
+
+    name = request.form['name']
+    price = request.form['price']
+    description = request.form['description']
+    stock = request.form['stock']
+
+    product = Product(
+        name=name,
+        price=price,
+        description=description,
+        stock=stock,
+        image='default.jpg'
+    )
+
+    db.session.add(product)
+    db.session.commit()
+
+    return redirect('/admin')
+
+
+# =========================
+# RUN APP
+# =========================
+
+if __name__ == '__main__':
+    app.run(debug=True)
